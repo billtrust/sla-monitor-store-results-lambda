@@ -1,0 +1,17 @@
+{
+  "name": "sla-monitor-store-results-lambda",
+  "version": "0.0.1",
+  "description": "Process SLA results",
+  "main": "index.js",
+  "author": "jaime.wissner@gmail.com",
+  "private": true,
+  "dependencies": {
+    "aws-sdk": "^2.292.0",
+    "bunyan": "^1.8.12",
+    "bunyan-prettystream": "^0.1.3"
+  },
+  "devDependencies": {
+    "serverless": "^1.30.0"
+  },
+  "scripts": {}
+}
