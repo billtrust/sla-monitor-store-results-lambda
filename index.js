@@ -56,8 +56,35 @@ async function getAwsAccountId() {
 
 async function processMessage(messageBody, receiptHandle) {
   const message = JSON.parse(messageBody);
-  const ISOtimestamp = process.env.IS_LOCAL ? new Date().toISOString() : getTime(message.timestamp);
 
+  const cloudwatch = new AWS.CloudWatch();
+  
+  // Metric variables
+  const namespace = "TEST-SLA-Monitor";
+  const ISOtimestamp = process.env.IS_LOCAL ? new Date().toISOString() : getTime(message.timestamp);
+  const resolution = 60;
+  const resultValue = testSuccess ? 0 : 1;
+  const dimensions = [
+    {
+      Name: "Service",
+      Value: `${message.service}`
+    },
+    {
+      Name: "Region",
+      Value: `${config.AWS_REGION}`
+    }
+  ];
+
+  // Metric template
+  const sourceMetric = {
+    Timestamp: ISOtimestamp,
+    StorageResolution: resolution,
+    Value: resultValue,
+    Dimensions: dimensions,
+    Unit: "Count",
+  };
+
+  // Message logging
   logger.debug(`Service: ${message.service}`);
   logger.debug("Groups:");
   for (let group of message.group) {
@@ -68,34 +95,33 @@ async function processMessage(messageBody, receiptHandle) {
   logger.debug(`Time: ${ISOtimestamp}`);
   logger.debug(`Execution Time: ${message.testExecutionSecs} secs`);
 
-  var cloudwatch = new AWS.CloudWatch();
+  // Instantiate final object
+  let finalMetrics = [];
+
+  // Setup all metrics
+  // Service metric
+  let serviceMetric = Object.assign(
+    { MetricName: `${message.service}-integration-sla` },
+    sourceMetric
+  );
+  finalMetrics.push(serviceMetric);
+
+  // Group metrics
+  for (let group of message.group) {
+    let groupMetric = Object.assign(
+      { MetricName: `${group}-integration-sla` },
+      sourceMetric
+    );
+    finalMetrics.push(groupMetric);
+  }
 
   let params = {
-    MetricData: [
-      {
-        MetricName: `${message.service}-integration-sla`,
-        Dimensions: [
-          {
-            Name: "Service",
-            Value: `${message.service}`
-          },
-          {
-            Name: "Region",
-            Value: `${config.AWS_REGION}`
-          }
-        ],
-        StorageResolution: 60,
-        Timestamp: ISOtimestamp,
-        Unit: "Count",
-        Value: testSuccess ? 0 : 1
-      }
-    ],
-    Namespace: `TEST-SLA-Monitor`
+    MetricData: finalMetrics,
+    Namespace: namespace
   };
 
-  for (let group in groups) {
-    
-  }
+  // Log actual params to send
+  logger.debug(params);
 
   await cloudwatch.putMetricData(params, function(err, data) {
     if (err) {
