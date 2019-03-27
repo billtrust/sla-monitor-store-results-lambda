@@ -1,0 +1,10 @@
+{
+  "Type" : "Notification",
+  "MessageId" : "4bfb5eb7-607c-595c-93d4-0d4723073725",
+  "TopicArn" : "arn:aws:sns:us-east-1:123456789012:sla-monitor-result-published-dev",
+  "Timestamp" : "2019-11-23T18:20:00Z",
+  "SignatureVersion" : "1",
+  "Signature" : "JCaHsacH+bW1DQI6jxJudDgEw3pTzEn7mVE0rj6KoZZjCCJ5aHxB6R07p1wEKkMegQmh5KuaxBegiDkMjKwLbuqwpTkdLi4xcsJuITUt8ymtZoySOEaGV7E7Ru/r8tJjZLjHfFvC5be4eWf2rdL6u/NmqcYQAWhBF8fgiPmEgll9Q8UcWvvbiHWnht4y2N5SphIv1L2Z8tiY8K5aWu3ERgtX49sSOqEJStNm1ajWqlfiu6TmaLsZEsraxWdNu96gzG8vTnvJxLstR3ofWJ7a9OHSG1cmo54nYIswQb9qqy47hUK5EbEqefzyGC2DiNKTsLt3rFHcYZBYU+RwW1X1VQ==",
+  "SigningCertURL" : "https://sns.us-east-1.amazonaws.com/SimpleNotificationService-eddd612472386ea12ed8dcd8bcbddca752.pem",
+  "UnsubscribeURL" : "https://sns.us-east-1.amazonaws.com/?Action=Unsubscribe&SubscriptionArn=arn:aws:sns:us-east-1:123456789012:sla-monitor-result-published-dev:16d4af72-a43d-4c7c-a2dd-a3595fcf17d3"
+}

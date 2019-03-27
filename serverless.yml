@@ -38,6 +38,11 @@ functions:
   sla-monitor-store-results-sqsworker:
     name: 'sla-monitor-store-results-sqsworker-${self:provider.stage}'
     handler: index.handler
+    environment:
+      METRIC_NAMESPACE: ${env:SLAMONITOR_NAMESPACE, 'SLA-Monitor'}
+      METRIC_RESOLUTION: 60
+      RESULTS_SQS_QUEUE_NAME: sla-monitor-store-results-${self:provider.stage}-${self:provider.region}
+      LOG_LEVEL: 'info'
     events:
       - sqs:
           arn:
@@ -51,7 +56,7 @@ resources:
     ProcessSLAMetricsSQSQueue:
       Type: AWS::SQS::Queue
       Properties: 
-        QueueName: sla-monitor-store-results-${self:provider.stage}
+        QueueName: sla-monitor-store-results-${self:provider.stage}-${self:provider.region}
         ReceiveMessageWaitTimeSeconds: 20
         VisibilityTimeout: 30
         MessageRetentionPeriod: 345600 # seconds (4 days)
@@ -73,12 +78,12 @@ resources:
               Principal: "*"
               Action:
                 - 'sqs:SendMessage'
-              Resource: { "Fn::Join" : [":", ["arn:aws:sqs", { "Ref" : "AWS::Region" }, { "Ref" : "AWS::AccountId" }, "sla-monitor-store-results-${self:provider.stage}" ] ] }
+              Resource: { "Fn::Join" : [":", ["arn:aws:sqs", { "Ref" : "AWS::Region" }, { "Ref" : "AWS::AccountId" }, "sla-monitor-store-results-${self:provider.stage}-${self:provider.region}" ] ] }
               Condition:
                 ArnEquals:
                   aws:SourceArn: { "Fn::Join" : ["", ["arn:aws:sns:", { "Ref" : "AWS::Region" }, ":", { "Ref" : "AWS::AccountId" }, ":sla-monitor-result-published-${self:provider.stage}" ] ] }
         Queues:
-          - { "Fn::Join" : ["", ["https://sqs.", { "Ref" : "AWS::Region" }, ".amazonaws.com/", { "Ref" : "AWS::AccountId" }, "/sla-monitor-store-results-${self:provider.stage}" ] ] }
+          - { "Fn::Join" : ["", ["https://sqs.", { "Ref" : "AWS::Region" }, ".amazonaws.com/", { "Ref" : "AWS::AccountId" }, "/sla-monitor-store-results-${self:provider.stage}-${self:provider.region}" ] ] }
       DependsOn:
         - ProcessSLAMetricsSQSQueue
     ProcessSLAMetricsSQSQueueDeadletter:

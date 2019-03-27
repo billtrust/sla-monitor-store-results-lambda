@@ -11,7 +11,7 @@ if (process.stdout.isTTY) {
 }
 
 module.exports = bunyan.createLogger({
-    name: 'fpw-secret-retrieve-sqsworker',
+    name: 'sla-monitor-store-results-sqsworker',
     streams: [
         {
             level: config.LOG_LEVEL,

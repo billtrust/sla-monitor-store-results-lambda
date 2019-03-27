@@ -60,10 +60,32 @@ async function processMessage(messageBody, receiptHandle) {
   const cloudwatch = new AWS.CloudWatch();
   
   // Metric variables
-  const namespace = "TEST-SLA-Monitor";
+  const namespace = config.METRIC_NAMESPACE;
   const ISOtimestamp = process.env.IS_LOCAL ? new Date().toISOString() : getTime(message.timestamp);
-  const resolution = 60;
-  const resultValue = testSuccess ? 0 : 1;
+  const resolution = config.METRIC_RESOLUTION;
+
+  let resultValue;
+  try {
+    const successMessage = message.succeeded.toLowerCase()
+    if (successMessage === "true") {
+      resultValueSuccess = 1;
+      resultValueFailure = 0;
+      testSucceeded = true;
+    } else if (successMessage === "false") {
+      resultValueSuccess = 0;
+      resultValueFailure = 1;
+      testSucceeded = false;
+    } else {
+      const msg = `Unexpected message succeeded value from SQS: ${message.succeeded}`;
+      logger.error(msg);
+      throw new Error(msg);
+    }
+  }
+  catch (err) {
+    const msg = `Error parsing message success value: ${err}`;
+    logger.error(msg);
+    throw err;
+  }
   const dimensions = [
     {
       Name: "Service",
@@ -79,7 +101,6 @@ async function processMessage(messageBody, receiptHandle) {
   const sourceMetric = {
     Timestamp: ISOtimestamp,
     StorageResolution: resolution,
-    Value: resultValue,
     Dimensions: dimensions,
     Unit: "Count",
   };
@@ -89,9 +110,8 @@ async function processMessage(messageBody, receiptHandle) {
   logger.debug("Groups:");
   for (let group of message.group) {
     logger.debug(`  ${group}`);
-  }
-  let testSuccess = message.succeeded === "true" ? true : false
-  logger.debug(`Result: ${testSuccess ? "Success" : "Failed"}`);
+  } 
+  logger.debug(`Result: ${!Boolean(resultValue) ? "Success" : "Failed"}`);
   logger.debug(`Time: ${ISOtimestamp}`);
   logger.debug(`Execution Time: ${message.testExecutionSecs} secs`);
 
@@ -99,20 +119,73 @@ async function processMessage(messageBody, receiptHandle) {
   let finalMetrics = [];
 
   // Setup all metrics
-  // Service metric
-  let serviceMetric = Object.assign(
-    { MetricName: `${message.service}-integration-sla` },
+
+  // Service metrics
+  // Success
+  let serviceSuccessMetric = Object.assign(
+    { 
+      MetricName: `integration-sla-success`,
+      Value: resultValueSuccess
+    },
+    sourceMetric
+  )
+
+  // Failure
+  let serviceFailureMetric = Object.assign(
+    { 
+      MetricName: `integration-sla-failure`,
+      Value: resultValueFailure
+    },
     sourceMetric
   );
-  finalMetrics.push(serviceMetric);
+
+  // Attempts
+  let serviceAttemptsMetric = Object.assign(
+    { 
+      MetricName: `integration-sla-attempts`,
+      Value: 1
+    },
+    sourceMetric
+  );
+
+  // Test Duration metric
+  let durationMetric = Object.assign(
+    { 
+      MetricName: `sla-test-duration-secs`,
+      Value: `${message.testExecutionSecs}`
+    },
+    sourceMetric,
+  )
+
+  finalMetrics.push(serviceSuccessMetric, serviceFailureMetric, serviceAttemptsMetric, durationMetric);
 
   // Group metrics
   for (let group of message.group) {
-    let groupMetric = Object.assign(
-      { MetricName: `${group}-integration-sla` },
-      sourceMetric
+    let groupSuccessMetric = Object.assign(
+      { 
+        MetricName: `${group}-integration-sla-success`,
+        Value: resultValueSuccess
+      },
+      sourceMetric,
     );
-    finalMetrics.push(groupMetric);
+
+    let groupFailureMetric = Object.assign(
+      { 
+        MetricName: `${group}-integration-sla-success`,
+        Value: resultValueFailure
+      },
+      sourceMetric,
+    );
+
+    let groupAttemptsMetric = Object.assign(
+      { 
+        MetricName: `${group}-integration-sla-success`,
+        Value: 1
+      },
+      sourceMetric,
+    );
+
+    finalMetrics.push(groupSuccessMetric, groupFailureMetric, groupAttemptsMetric);
   }
 
   let params = {
@@ -136,8 +209,9 @@ async function processMessage(messageBody, receiptHandle) {
 
 function getTime(timestamp){
   let a = new Date(timestamp * 1000);
-  logger.debug(a.toLocaleString('en-US'));
-  return a.toISOString();
+  const isoString = a.toISOString();
+  logger.debug(`Timestamp: ${isoString}`);
+  return isoString;
 }
 
 module.exports.handler = handler;
