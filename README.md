@@ -107,16 +107,33 @@ docker build -t sla-monitor-lambda .
 
 iam-docker-run \
     --image sla-monitor-lambda \
-    --profile $AWS_ENV \
-    --full-entrypoint '/bin/bash ./invoke.sh' \
+    --full-entrypoint 'npm install' \
     --host-source-path . \
     --container-source-path /app
+
+iam-docker-run \
+    --image sla-monitor-lambda \
+    --profile $AWS_ENV \
+    --full-entrypoint '/bin/bash ./invokeLocal.sh' \
+    --host-source-path . \
+    --container-source-path /app
+```
+
+Continuous data:
+
+```bash
+watch -n 5 "iam-docker-run \
+    --image sla-monitor-lambda \
+    --profile $AWS_ENV \
+    --full-entrypoint '/bin/bash ./invokeLocal.sh' \
+    --host-source-path . \
+    --container-source-path /app"
 ```
 
 # Deploying
 
 ```bash
-export AWS_ENV="dev"
+export AWS_ENV="dev" && \
 docker build -t sla-monitor-lambda .
 
 iam-docker-run \

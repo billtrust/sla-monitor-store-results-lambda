@@ -13,7 +13,7 @@ async function handler(event, context, done) {
   try {
     let promises = []
     for (let record of event.Records) {
-      let snsRecordBody = JSON.parse(record.body)
+      let snsRecordBody = record.body;
       promises.push(processMessage(snsRecordBody.Message, record.receiptHandle))
     }
     await Promise.all(promises)
@@ -31,8 +31,10 @@ async function deleteMessage(receiptHandle) {
   const queueUrl = `https://sqs.${config.AWS_REGION}.amazonaws.com/${awsAccountId}/${config.RESULTS_SQS_QUEUE_NAME}`
   logger.debug(`Deleting message with receiptHandle ${receiptHandle} for queueUrl: ${queueUrl}`)
 
-  if (receiptHandle === 'MessageReceiptHandle') {
-    logger.warn('Skipping delete message, receipt handle indicates local testing')
+  const testingHandles = ['MessageReceiptHandle', 'SuccessTestingHandle', 'FailureTestingHandle']
+
+  if (testingHandles.includes(receiptHandle)) {
+    logger.debug('Skipping delete message, receipt handle indicates local testing')
   } else {
     try {
       await sqs.deleteMessage({
@@ -54,17 +56,17 @@ async function getAwsAccountId() {
   return data.Account
 }
 
-async function processMessage(messageBody, receiptHandle) {
-  const message = JSON.parse(messageBody);
-
+async function processMessage(message, receiptHandle) {
   const cloudwatch = new AWS.CloudWatch();
   
   // Metric variables
-  const namespace = config.METRIC_NAMESPACE;
-  const ISOtimestamp = process.env.IS_LOCAL ? new Date().toISOString() : getTime(message.timestamp);
-  const resolution = config.METRIC_RESOLUTION;
+  const namespace = config.METRIC_NAMESPACE,
+        ISOtimestamp = process.env.IS_LOCAL ? new Date().toISOString() : getTime(message.timestamp),
+        resolution = config.METRIC_RESOLUTION;
 
-  let resultValue;
+  let resultValueSuccess,
+      resultValueFailure,
+      testSucceeded;
   try {
     const successMessage = message.succeeded.toLowerCase()
     if (successMessage === "true") {
@@ -86,15 +88,16 @@ async function processMessage(messageBody, receiptHandle) {
     logger.error(msg);
     throw err;
   }
+
   const dimensions = [
+    {
+      Name: "Region",
+      Value: `${config.AWS_REGION}`
+    },
     {
       Name: "Service",
       Value: `${message.service}`
     },
-    {
-      Name: "Region",
-      Value: `${config.AWS_REGION}`
-    }
   ];
 
   // Metric template
@@ -111,7 +114,7 @@ async function processMessage(messageBody, receiptHandle) {
   for (let group of message.group) {
     logger.debug(`  ${group}`);
   } 
-  logger.debug(`Result: ${!Boolean(resultValue) ? "Success" : "Failed"}`);
+  logger.debug(`Result: ${!Boolean(testSucceeded) ? "Success" : "Failed"}`);
   logger.debug(`Time: ${ISOtimestamp}`);
   logger.debug(`Execution Time: ${message.testExecutionSecs} secs`);
 
@@ -161,28 +164,42 @@ async function processMessage(messageBody, receiptHandle) {
 
   // Group metrics
   for (let group of message.group) {
+
+    const groupDimensionAddition = {
+      Dimensions: [
+        {
+          Name: "Group",
+          Value: `${group}`
+        },
+        ...dimensions
+      ]
+    }
+
     let groupSuccessMetric = Object.assign(
       { 
-        MetricName: `${group}-integration-sla-success`,
+        MetricName: `integration-sla-success`,
         Value: resultValueSuccess
       },
       sourceMetric,
+      groupDimensionAddition,
     );
 
     let groupFailureMetric = Object.assign(
       { 
-        MetricName: `${group}-integration-sla-success`,
+        MetricName: `integration-sla-failure`,
         Value: resultValueFailure
       },
       sourceMetric,
+      groupDimensionAddition,
     );
 
     let groupAttemptsMetric = Object.assign(
       { 
-        MetricName: `${group}-integration-sla-success`,
+        MetricName: `integration-sla-attempts`,
         Value: 1
       },
       sourceMetric,
+      groupDimensionAddition,
     );
 
     finalMetrics.push(groupSuccessMetric, groupFailureMetric, groupAttemptsMetric);
@@ -194,7 +211,9 @@ async function processMessage(messageBody, receiptHandle) {
   };
 
   // Log actual params to send
-  logger.debug(params);
+  for (let message in params.MetricData) {
+    logger.debug(JSON.stringify(params.MetricData[message], null, 1));
+  }
 
   await cloudwatch.putMetricData(params, function(err, data) {
     if (err) {
