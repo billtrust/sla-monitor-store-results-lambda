@@ -28,72 +28,199 @@ As an example, this message would be published as custom cloudwatch metrics with
 { 
     "MetricData": [
         {
-            "MetricName": "example-service-integration-sla-service",
-            "Timestamp": "2019-11-23T13:20:00-05:00",
-            "StorageResolution": 60,
-            "Value": 0,
+            "MetricName": "integration-sla-success",
+            "Value": 1,
+            "Timestamp": "2019-04-02T15:44:26.329Z",
+            "StorageResolution": "60",
             "Dimensions": [
                 {
-                "Name": "Service",
-                "Value": "example-service"
+                    "Name": "Region",
+                    "Value": "us-east-1"
                 },
                 {
-                "Name": "Region",
-                "Value": "us-east-1"
+                    "Name": "Service",
+                    "Value": "example-service"
                 }
             ],
-            "Unit": "Count",
-        },
+            "Unit": "Count"
+        }
         {
-            "MetricName": "example-service-sla-test-duration-secs",
-            "Timestamp": "2019-11-23T13:20:00-05:00",
-            "StorageResolution": 60,
-            "Value": 34,
-            "Dimensions": [
-                {
-                "Name": "Service",
-                "Value": "example-service"
-                },
-                {
-                "Name": "Region",
-                "Value": "us-east-1"
-                }
-            ],
-            "Unit": "Count",
-        },
-        {
-            "MetricName": "dev-team-integration-sla-group",
-            "Timestamp": "2019-11-23T13:20:00-05:00",
-            "StorageResolution": 60,
+            "MetricName": "integration-sla-failure",
             "Value": 0,
+            "Timestamp": "2019-04-02T15:44:26.329Z",
+            "StorageResolution": "60",
             "Dimensions": [
                 {
-                "Name": "Service",
-                "Value": "example-service"
+                    "Name": "Region",
+                    "Value": "us-east-1"
                 },
                 {
-                "Name": "Region",
-                "Value": "us-east-1"
+                    "Name": "Service",
+                    "Value": "example-service"
                 }
             ],
-            "Unit": "Count",
-        },
+            "Unit": "Count"
+        }
         {
-            "MetricName": "critical-integration-sla-group",
-            "Timestamp": "2019-11-23T13:20:00-05:00",
-            "StorageResolution": 60,
-            "Value": 0,
+            "MetricName": "integration-sla-attempts",
+            "Value": 1,
+            "Timestamp": "2019-04-02T15:44:26.329Z",
+            "StorageResolution": "60",
             "Dimensions": [
                 {
-                "Name": "Service",
-                "Value": "example-service"
+                    "Name": "Region",
+                    "Value": "us-east-1"
                 },
                 {
-                "Name": "Region",
-                "Value": "us-east-1"
+                    "Name": "Service",
+                    "Value": "example-service"
                 }
             ],
-        },
+            "Unit": "Count"
+        }
+        {
+            "MetricName": "sla-test-duration-secs",
+            "Value": "31",
+            "Timestamp": "2019-04-02T15:44:26.329Z",
+            "StorageResolution": "60",
+            "Dimensions": [
+                {
+                    "Name": "Region",
+                    "Value": "us-east-1"
+                },
+                {
+                    "Name": "Service",
+                    "Value": "example-service"
+                }
+            ],
+            "Unit": "Count"
+        }
+        {
+            "MetricName": "integration-sla-success",
+            "Value": 1,
+            "Timestamp": "2019-04-02T15:44:26.329Z",
+            "StorageResolution": "60",
+            "Dimensions": [
+                {
+                    "Name": "Group",
+                    "Value": "dev-team"
+                },
+                {
+                    "Name": "Region",
+                    "Value": "us-east-1"
+                },
+                {
+                    "Name": "Service",
+                    "Value": "example-service"
+                }
+            ],
+            "Unit": "Count"
+        }
+        {
+            "MetricName": "integration-sla-failure",
+            "Value": 0,
+            "Timestamp": "2019-04-02T15:44:26.329Z",
+            "StorageResolution": "60",
+            "Dimensions": [
+                {
+                    "Name": "Group",
+                    "Value": "dev-team"
+                },
+                {
+                    "Name": "Region",
+                    "Value": "us-east-1"
+                },
+                {
+                    "Name": "Service",
+                    "Value": "example-service"
+                }
+            ],
+            "Unit": "Count"
+        }
+        {
+            "MetricName": "integration-sla-attempts",
+            "Value": 1,
+            "Timestamp": "2019-04-02T15:44:26.329Z",
+            "StorageResolution": "60",
+            "Dimensions": [
+                {
+                    "Name": "Group",
+                    "Value": "dev-team"
+                },
+                {
+                    "Name": "Region",
+                    "Value": "us-east-1"
+                },
+                {
+                    "Name": "Service",
+                    "Value": "example-service"
+                }
+            ],
+            "Unit": "Count"
+        }
+        {
+            "MetricName": "integration-sla-success",
+            "Value": 1,
+            "Timestamp": "2019-04-02T15:44:26.329Z",
+            "StorageResolution": "60",
+            "Dimensions": [
+                {
+                    "Name": "Group",
+                    "Value": "critical"
+                },
+                {
+                    "Name": "Region",
+                    "Value": "us-east-1"
+                },
+                {
+                    "Name": "Service",
+                    "Value": "example-service"
+                }
+            ],
+            "Unit": "Count"
+        }
+        {
+            "MetricName": "integration-sla-failure",
+            "Value": 0,
+            "Timestamp": "2019-04-02T15:44:26.329Z",
+            "StorageResolution": "60",
+            "Dimensions": [
+                {
+                    "Name": "Group",
+                    "Value": "critical"
+                },
+                {
+                    "Name": "Region",
+                    "Value": "us-east-1"
+                },
+                {
+                    "Name": "Service",
+                    "Value": "example-service"
+                }
+            ],
+            "Unit": "Count"
+        }
+        {
+            "MetricName": "integration-sla-attempts",
+            "Value": 1,
+            "Timestamp": "2019-04-02T15:44:26.329Z",
+            "StorageResolution": "60",
+            "Dimensions": [
+                {
+                    "Name": "Group",
+                    "Value": "critical"
+                },
+                {
+                    "Name": "Region",
+                    "Value": "us-east-1"
+                },
+                {
+                    "Name": "Service",
+                    "Value": "example-service"
+                }
+            ],
+            "Unit": "Count"
+        }
     ],
     "Namespace": "SLA-Monitor"
 }
@@ -102,42 +229,43 @@ As an example, this message would be published as custom cloudwatch metrics with
 ## Testing
 
 ```bash
-export AWS_ENV="dev"
 docker build -t sla-monitor-lambda .
 
-iam-docker-run \
-    --image sla-monitor-lambda \
-    --full-entrypoint 'npm install' \
-    --host-source-path . \
-    --container-source-path /app
-
+export AWS_ENV="dev" && \
 iam-docker-run \
     --image sla-monitor-lambda \
     --profile $AWS_ENV \
-    --full-entrypoint '/bin/bash ./invokeLocal.sh' \
-    --host-source-path . \
-    --container-source-path /app
+    --full-entrypoint '/bin/bash ./invokeLocal.sh'
 ```
 
 Continuous data:
 
 ```bash
+export AWS_ENV="dev" && \
 watch -n 5 "iam-docker-run \
     --image sla-monitor-lambda \
     --profile $AWS_ENV \
-    --full-entrypoint '/bin/bash ./invokeLocal.sh' \
-    --host-source-path . \
-    --container-source-path /app"
+    --full-entrypoint '/bin/bash ./invokeLocal.sh'
 ```
+
+If you want to mount the folder in instead of building every time, you can add these lines
+
+```
+    --host-source-path . \
+    --container-source-path /app
+```
+
+However, be aware that unless you run "npm install" before running invoke, you will be missing dependencies.
 
 # Deploying
 
 ```bash
-export AWS_ENV="dev" && \
 docker build -t sla-monitor-lambda .
 
+export AWS_ENV="dev" && \
+export DEPLOY_BUCKET='company-deploy' && \
 iam-docker-run \
     --image sla-monitor-lambda \
     --profile $AWS_ENV \
-    --full-entrypoint sls deploy
+    --full-entrypoint "sls deploy --deployBucket $DEPLOY_BUCKET"
 ```
