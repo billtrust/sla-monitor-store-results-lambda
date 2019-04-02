@@ -52,14 +52,14 @@ SQSEventMessage.testExecutionSecs = Math.floor(Math.random() * (Math.floor(60) -
 const [succeeded, receiptHandle] = decideIfSuccess();
 SQSEventMessage.succeeded = succeeded;
 
-SQSEventBody.Message = SQSEventMessage;
+SQSEventBody.Message = JSON.stringify(SQSEventMessage);
 
 const SQSEventFull = {
     "Records": [
         {
             "messageId": "4c345603-810b-4fda-9d25-32891901f71d",
             "receiptHandle": receiptHandle,
-            "body": SQSEventBody,
+            "body": JSON.stringify(SQSEventBody),
             "attributes": {
                 "ApproximateReceiveCount": "3",
                 "SentTimestamp": "1534476603214",

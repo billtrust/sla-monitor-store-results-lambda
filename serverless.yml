@@ -78,22 +78,22 @@ resources:
               Principal: "*"
               Action:
                 - 'sqs:SendMessage'
-              Resource: { "Fn::Join" : [":", ["arn:aws:sqs", { "Ref" : "AWS::Region" }, { "Ref" : "AWS::AccountId" }, "sla-monitor-store-results-${self:provider.stage}-${self:provider.region}" ] ] }
+              Resource: { "Fn::Join": [":", ["arn:aws:sqs", { "Ref" : "AWS::Region" }, { "Ref" : "AWS::AccountId" }, "sla-monitor-store-results-${self:provider.stage}-${self:provider.region}" ] ] }
               Condition:
                 ArnEquals:
                   aws:SourceArn: { "Fn::Join" : ["", ["arn:aws:sns:", { "Ref" : "AWS::Region" }, ":", { "Ref" : "AWS::AccountId" }, ":sla-monitor-result-published-${self:provider.stage}" ] ] }
         Queues:
-          - { "Fn::Join" : ["", ["https://sqs.", { "Ref" : "AWS::Region" }, ".amazonaws.com/", { "Ref" : "AWS::AccountId" }, "/sla-monitor-store-results-${self:provider.stage}-${self:provider.region}" ] ] }
+          - { "Fn::Join" : ["", ["https://sqs.", { "Ref" : "AWS::Region" }, ".amazonaws.com/", { "Ref" : "AWS::AccountId" }, "/", "sla-monitor-store-results-${self:provider.stage}-${self:provider.region}" ] ] }
       DependsOn:
         - ProcessSLAMetricsSQSQueue
     ProcessSLAMetricsSQSQueueDeadletter:
       Type: AWS::SQS::Queue
       Properties:
-        QueueName: sla-monitor-store-results-${self:provider.stage}-deadletter
+        QueueName: "sla-monitor-store-results-${self:provider.stage}-${self:provider.region}-deadletter"
     ProcessSLAMetricsSNSSubscription:
       DependsOn: ProcessSLAMetricsSQSQueue
       Type: AWS::SNS::Subscription
       Properties:
-        Endpoint: { "Fn::Join" : [":", ["arn:aws:sqs", { "Ref" : "AWS::Region" }, { "Ref" : "AWS::AccountId" }, "sla-monitor-store-results-${self:provider.stage}" ] ] }
+        Endpoint: { "Fn::Join" : [":", ["arn:aws:sqs", { "Ref" : "AWS::Region" }, { "Ref" : "AWS::AccountId" }, "sla-monitor-store-results-${self:provider.stage}-${self:provider.region}" ] ] }
         Protocol: SQS
         TopicArn: { "Fn::Join" : ["", ["arn:aws:sns:", { "Ref" : "AWS::Region" }, ":", { "Ref" : "AWS::AccountId" }, ":sla-monitor-result-published-${self:provider.stage}" ] ] }

@@ -13,8 +13,8 @@ async function handler(event, context, done) {
   try {
     let promises = []
     for (let record of event.Records) {
-      let snsRecordBody = record.body;
-      promises.push(processMessage(snsRecordBody.Message, record.receiptHandle))
+      let snsRecordBody = JSON.parse(record.body);
+      promises.push(processMessage(JSON.parse(snsRecordBody.Message), record.receiptHandle))
     }
     await Promise.all(promises)
     logger.debug("All processed")
