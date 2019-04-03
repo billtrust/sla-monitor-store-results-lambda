@@ -66,17 +66,14 @@ async function processMessage(message, receiptHandle) {
 
   let resultValueSuccess,
       resultValueFailure,
-      testSucceeded;
+      testSucceeded = message.succeeded;
   try {
-    const successMessage = message.succeeded.toLowerCase()
-    if (successMessage === "true") {
+    if (testSucceeded === true) {
       resultValueSuccess = 1;
       resultValueFailure = 0;
-      testSucceeded = true;
-    } else if (successMessage === "false") {
+    } else if (testSucceeded === false) {
       resultValueSuccess = 0;
       resultValueFailure = 1;
-      testSucceeded = false;
     } else {
       const msg = `Unexpected message succeeded value from SQS: ${message.succeeded}`;
       logger.error(msg);
@@ -108,15 +105,23 @@ async function processMessage(message, receiptHandle) {
     Unit: "Count",
   };
 
+  let infoDebugLog = "";
+
   // Message logging
-  logger.debug(`Service: ${message.service}`);
-  logger.debug("Groups:");
-  for (let group of message.group) {
-    logger.debug(`  ${group}`);
-  } 
-  logger.debug(`Result: ${!Boolean(testSucceeded) ? "Success" : "Failed"}`);
-  logger.debug(`Time: ${ISOtimestamp}`);
-  logger.debug(`Execution Time: ${message.testExecutionSecs} secs`);
+  infoDebugLog += `Service: ${message.service}\n`;
+  infoDebugLog += "Groups:\n";
+  if (message.groups.length > 0) {
+    for (let group of message.groups) {
+      infoDebugLog += `  ${group}\n`;
+    } 
+  } else {
+    infoDebugLog += `  None\n`;
+  }
+  infoDebugLog += `Result: ${testSucceeded ? "Success" : "Failed"}\n`;
+  infoDebugLog += `Time: ${ISOtimestamp}\n`;
+  infoDebugLog += `Execution Time: ${message.testExecutionSecs} secs`;
+
+  logger.debug(infoDebugLog);
 
   // Instantiate final object
   let finalMetrics = [];
@@ -163,7 +168,7 @@ async function processMessage(message, receiptHandle) {
   finalMetrics.push(serviceSuccessMetric, serviceFailureMetric, serviceAttemptsMetric, durationMetric);
 
   // Group metrics
-  for (let group of message.group) {
+  for (let group of message.groups) {
 
     const groupDimensionAddition = {
       Dimensions: [

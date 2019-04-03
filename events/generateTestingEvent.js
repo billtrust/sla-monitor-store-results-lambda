@@ -20,8 +20,8 @@ try {
 }
 
 const results = [
-    { result: "true", chance: trueChance },
-    { result: "false", chance: falseChance }
+    { result: true, chance: trueChance },
+    { result: false, chance: falseChance }
 ]
 
 let randomResult = new WRS((result) => {
@@ -44,7 +44,7 @@ const decideIfSuccess = function() {
 let SQSEventBody = require("./bodyTemplate.json");
 let SQSEventMessage = {
     "service": "example-service",
-    "group": ["dev-team", "critical"]
+    "groups": ["dev-team", "critical"]
 }
 
 SQSEventMessage.timestamp = new Date().getTime();

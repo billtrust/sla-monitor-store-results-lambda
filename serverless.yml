@@ -28,7 +28,12 @@ provider:
             - 'arn:aws:sqs'
             - Ref: 'AWS::Region'
             - Ref: 'AWS::AccountId'
-            - 'sla-monitor-store-results'
+            - 'sla-monitor-store-results-${self:provider.stage}-${self:provider.region}'
+    -
+      Effect: Allow
+      Action:
+        - cloudwatch:PutMetricData
+      Resource: "*"
 
 package:
       exclude:
@@ -42,7 +47,7 @@ functions:
       METRIC_NAMESPACE: ${env:SLAMONITOR_NAMESPACE, 'SLA-Monitor'}
       METRIC_RESOLUTION: 60
       RESULTS_SQS_QUEUE_NAME: sla-monitor-store-results-${self:provider.stage}-${self:provider.region}
-      LOG_LEVEL: 'info'
+      LOG_LEVEL: 'debug'
     events:
       - sqs:
           arn:
