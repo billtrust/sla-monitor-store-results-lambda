@@ -259,6 +259,12 @@ However, be aware that unless you run "npm install" before running invoke, you w
 
 # Deploying
 
+This Lambda relies on an SNS topic to have been created as part of the SLA Monitor Runner project.  First execute this Terraform by following these instructions:
+
+https://github.com/billtrust/sla-monitor-runner#terraform
+
+Then the SLA Monitor Store Results Lambda can be deployed by the following:
+
 ```bash
 docker build -t sla-monitor-lambda .
 
