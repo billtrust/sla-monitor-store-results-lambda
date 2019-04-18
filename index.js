@@ -170,13 +170,16 @@ async function processMessage(message, receiptHandle) {
   // Group metrics
   for (let group of message.groups) {
 
-    const groupDimensionAddition = {
+    const groupDimensions = {
       Dimensions: [
         {
           Name: "Group",
           Value: `${group}`
         },
-        ...dimensions
+        {
+          Name: "Region",
+          Value: `${config.AWS_REGION}`
+        }
       ]
     }
 
@@ -186,7 +189,7 @@ async function processMessage(message, receiptHandle) {
         Value: resultValueSuccess
       },
       sourceMetric,
-      groupDimensionAddition,
+      groupDimensions,
     );
 
     let groupFailureMetric = Object.assign(
@@ -195,7 +198,7 @@ async function processMessage(message, receiptHandle) {
         Value: resultValueFailure
       },
       sourceMetric,
-      groupDimensionAddition,
+      groupDimensions,
     );
 
     let groupAttemptsMetric = Object.assign(
@@ -204,7 +207,7 @@ async function processMessage(message, receiptHandle) {
         Value: 1
       },
       sourceMetric,
-      groupDimensionAddition,
+      groupDimensions,
     );
 
     finalMetrics.push(groupSuccessMetric, groupFailureMetric, groupAttemptsMetric);
