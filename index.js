@@ -169,47 +169,49 @@ async function processMessage(message, receiptHandle) {
 
   // Group metrics
   for (let group of message.groups) {
-    if (group) {
-      const groupDimensionAddition = {
-        Dimensions: [
-          {
-            Name: "Group",
-            Value: `${group}`
-          },
-          ...dimensions
-        ]
-      }
 
-      let groupSuccessMetric = Object.assign(
-        { 
-          MetricName: `integration-sla-success`,
-          Value: resultValueSuccess
+    const groupDimensions = {
+      Dimensions: [
+        {
+          Name: "Group",
+          Value: `${group}`
         },
-        sourceMetric,
-        groupDimensionAddition,
-      );
-
-      let groupFailureMetric = Object.assign(
-        { 
-          MetricName: `integration-sla-failure`,
-          Value: resultValueFailure
-        },
-        sourceMetric,
-        groupDimensionAddition,
-      );
-
-      let groupAttemptsMetric = Object.assign(
-        { 
-          MetricName: `integration-sla-attempts`,
-          Value: 1
-        },
-        sourceMetric,
-        groupDimensionAddition,
-      );
-
-      finalMetrics.push(groupSuccessMetric, groupFailureMetric, groupAttemptsMetric);
+        {
+          Name: "Region",
+          Value: `${config.AWS_REGION}`
+        }
+      ]
     }
-  };
+
+    let groupSuccessMetric = Object.assign(
+      { 
+        MetricName: `integration-sla-success`,
+        Value: resultValueSuccess
+      },
+      sourceMetric,
+      groupDimensions,
+    );
+
+    let groupFailureMetric = Object.assign(
+      { 
+        MetricName: `integration-sla-failure`,
+        Value: resultValueFailure
+      },
+      sourceMetric,
+      groupDimensions,
+    );
+
+    let groupAttemptsMetric = Object.assign(
+      { 
+        MetricName: `integration-sla-attempts`,
+        Value: 1
+      },
+      sourceMetric,
+      groupDimensions,
+    );
+
+    finalMetrics.push(groupSuccessMetric, groupFailureMetric, groupAttemptsMetric);
+  }
 
   let params = {
     MetricData: finalMetrics,
