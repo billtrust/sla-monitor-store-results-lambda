@@ -169,51 +169,52 @@ async function processMessage(message, receiptHandle) {
 
   // Group metrics
   for (let group of message.groups) {
+    if (group) {
+      const groupDimensionAddition = {
+        Dimensions: [
+          {
+            Name: "Group",
+            Value: `${group}`
+          },
+          ...dimensions
+        ]
+      }
 
-    const groupDimensionAddition = {
-      Dimensions: [
-        {
-          Name: "Group",
-          Value: `${group}`
+      let groupSuccessMetric = Object.assign(
+        { 
+          MetricName: `integration-sla-success`,
+          Value: resultValueSuccess
         },
-        ...dimensions
-      ]
+        sourceMetric,
+        groupDimensionAddition,
+      );
+
+      let groupFailureMetric = Object.assign(
+        { 
+          MetricName: `integration-sla-failure`,
+          Value: resultValueFailure
+        },
+        sourceMetric,
+        groupDimensionAddition,
+      );
+
+      let groupAttemptsMetric = Object.assign(
+        { 
+          MetricName: `integration-sla-attempts`,
+          Value: 1
+        },
+        sourceMetric,
+        groupDimensionAddition,
+      );
+
+      finalMetrics.push(groupSuccessMetric, groupFailureMetric, groupAttemptsMetric);
     }
-
-    let groupSuccessMetric = Object.assign(
-      { 
-        MetricName: `integration-sla-success`,
-        Value: resultValueSuccess
-      },
-      sourceMetric,
-      groupDimensionAddition,
-    );
-
-    let groupFailureMetric = Object.assign(
-      { 
-        MetricName: `integration-sla-failure`,
-        Value: resultValueFailure
-      },
-      sourceMetric,
-      groupDimensionAddition,
-    );
-
-    let groupAttemptsMetric = Object.assign(
-      { 
-        MetricName: `integration-sla-attempts`,
-        Value: 1
-      },
-      sourceMetric,
-      groupDimensionAddition,
-    );
-
-    finalMetrics.push(groupSuccessMetric, groupFailureMetric, groupAttemptsMetric);
-  }
+  };
 
   let params = {
     MetricData: finalMetrics,
     Namespace: namespace
-  };
+  }
 
   // Log actual params to send
   for (let message in params.MetricData) {
