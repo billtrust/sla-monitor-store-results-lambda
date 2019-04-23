@@ -9,7 +9,7 @@ provider:
   name: aws
   region: ${env:AWS_REGION, 'us-east-1'}
   runtime: nodejs8.10
-  deploymentBucket: ${opt:deployBucket}-${env:AWS_ENV, 'dev'}-${env:AWS_REGION, 'us-east-1'}
+  deploymentBucket: ${opt:deployBucket}
   stage: ${env:AWS_ENV, 'dev'}
   logRetentionInDays: 14 # cloudwatch logs
   timeout: 10 # seconds

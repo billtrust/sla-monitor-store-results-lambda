@@ -269,7 +269,8 @@ Then the SLA Monitor Store Results Lambda can be deployed by the following:
 docker build -t sla-monitor-lambda .
 
 export AWS_ENV="dev" && \
-export DEPLOY_BUCKET='company-deploy' && \
+export AWS_REGION="us-east-1" && \
+export DEPLOY_BUCKET='billtrust-deploy-${AWS_ENV}-${AWS_REGION}' && \
 iam-docker-run \
     --image sla-monitor-lambda \
     --profile $AWS_ENV \
