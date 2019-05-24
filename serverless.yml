@@ -1,4 +1,4 @@
-service: sla-monitor-store-results-sqsworker
+service: sla-monitor-sqsworker
 
 # pin to a specific Serverless version
 frameworkVersion: ">=1.2.0 <2.0.0"
