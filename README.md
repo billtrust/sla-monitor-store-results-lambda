@@ -270,7 +270,7 @@ docker build -t sla-monitor-lambda .
 
 export AWS_ENV="dev" && \
 export AWS_REGION="us-east-1" && \
-export DEPLOY_BUCKET='billtrust-deploy-${AWS_ENV}-${AWS_REGION}' && \
+export DEPLOY_BUCKET='mycompany-deploy-${AWS_ENV}-${AWS_REGION}' && \
 iam-docker-run \
     --image sla-monitor-lambda \
     --profile $AWS_ENV \
