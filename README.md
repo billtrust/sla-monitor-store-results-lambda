@@ -34,12 +34,12 @@ As an example, this message would be published as custom cloudwatch metrics with
             "StorageResolution": "60",
             "Dimensions": [
                 {
-                    "Name": "Region",
-                    "Value": "us-east-1"
-                },
-                {
                     "Name": "Service",
                     "Value": "example-service"
+                },
+                {
+                    "Name": "Region",
+                    "Value": "us-east-1"
                 }
             ],
             "Unit": "Count"
@@ -51,12 +51,12 @@ As an example, this message would be published as custom cloudwatch metrics with
             "StorageResolution": "60",
             "Dimensions": [
                 {
-                    "Name": "Region",
-                    "Value": "us-east-1"
-                },
-                {
                     "Name": "Service",
                     "Value": "example-service"
+                },
+                {
+                    "Name": "Region",
+                    "Value": "us-east-1"
                 }
             ],
             "Unit": "Count"
@@ -68,12 +68,12 @@ As an example, this message would be published as custom cloudwatch metrics with
             "StorageResolution": "60",
             "Dimensions": [
                 {
-                    "Name": "Region",
-                    "Value": "us-east-1"
-                },
-                {
                     "Name": "Service",
                     "Value": "example-service"
+                },
+                {
+                    "Name": "Region",
+                    "Value": "us-east-1"
                 }
             ],
             "Unit": "Count"
@@ -85,12 +85,12 @@ As an example, this message would be published as custom cloudwatch metrics with
             "StorageResolution": "60",
             "Dimensions": [
                 {
-                    "Name": "Region",
-                    "Value": "us-east-1"
-                },
-                {
                     "Name": "Service",
                     "Value": "example-service"
+                }
+                {
+                    "Name": "Region",
+                    "Value": "us-east-1"
                 }
             ],
             "Unit": "Count"
@@ -108,10 +108,6 @@ As an example, this message would be published as custom cloudwatch metrics with
                 {
                     "Name": "Region",
                     "Value": "us-east-1"
-                },
-                {
-                    "Name": "Service",
-                    "Value": "example-service"
                 }
             ],
             "Unit": "Count"
@@ -129,10 +125,6 @@ As an example, this message would be published as custom cloudwatch metrics with
                 {
                     "Name": "Region",
                     "Value": "us-east-1"
-                },
-                {
-                    "Name": "Service",
-                    "Value": "example-service"
                 }
             ],
             "Unit": "Count"
@@ -150,10 +142,6 @@ As an example, this message would be published as custom cloudwatch metrics with
                 {
                     "Name": "Region",
                     "Value": "us-east-1"
-                },
-                {
-                    "Name": "Service",
-                    "Value": "example-service"
                 }
             ],
             "Unit": "Count"
@@ -171,10 +159,6 @@ As an example, this message would be published as custom cloudwatch metrics with
                 {
                     "Name": "Region",
                     "Value": "us-east-1"
-                },
-                {
-                    "Name": "Service",
-                    "Value": "example-service"
                 }
             ],
             "Unit": "Count"
@@ -192,10 +176,6 @@ As an example, this message would be published as custom cloudwatch metrics with
                 {
                     "Name": "Region",
                     "Value": "us-east-1"
-                },
-                {
-                    "Name": "Service",
-                    "Value": "example-service"
                 }
             ],
             "Unit": "Count"
@@ -213,10 +193,6 @@ As an example, this message would be published as custom cloudwatch metrics with
                 {
                     "Name": "Region",
                     "Value": "us-east-1"
-                },
-                {
-                    "Name": "Service",
-                    "Value": "example-service"
                 }
             ],
             "Unit": "Count"

@@ -99,7 +99,7 @@ async function processMessage(message, receiptHandle) {
 
   // Metric template
   const sourceMetric = {
-    Timestamp: ISOtimestamp,
+    Timestamp: parseInt(message.timestamp), // ISOtimestamp,
     StorageResolution: resolution,
     Dimensions: dimensions,
     Unit: "Count",
