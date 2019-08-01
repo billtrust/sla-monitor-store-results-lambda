@@ -250,6 +250,7 @@ export DEPLOY_BUCKET='mycompany-deploy-${AWS_ENV}-${AWS_REGION}' && \
 iam-docker-run \
     --image sla-monitor-lambda \
     --profile $AWS_ENV \
+    -e "AWS_ENV=$AWS_ENV" \
     --full-entrypoint "sls deploy --deployBucket $DEPLOY_BUCKET"
 ```
 
