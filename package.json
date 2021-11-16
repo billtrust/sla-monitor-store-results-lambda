@@ -6,7 +6,7 @@
   "author": "jaime.wissner@gmail.com",
   "private": true,
   "dependencies": {
-    "aws-sdk": "^2.292.0",
+    "aws-sdk": "^2.814.0",
     "bunyan": "^1.8.12",
     "bunyan-prettystream": "^0.1.3"
   },
